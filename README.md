@@ -94,7 +94,6 @@ npm test
 
 ```bash
 npm test
-npm run sync
 npm login
 
 # 绑定 GitHub Actions 作为可信发布者
@@ -111,10 +110,10 @@ npm trust list magpie-leaderboard
 
 ### 后续发版
 
-当前 `package.json` 已经是 `0.1.0`，可以直接发。以后改版本（`npm version patch`、
-`minor` 或 `major`）并 push，然后在 GitHub 创建 Release（或手动运行
-“Publish to npm” workflow）。workflow 会先跑测试，再通过 OIDC 发布，无需
-`NPM_TOKEN`，并自动附带 provenance。
+当前 `package.json` 已经是 `0.1.0`，可以直接发。以后按需 `npm run sync` 刷新数据、
+改版本（`npm version patch`、`minor` 或 `major`）并 push，然后在 GitHub 创建
+Release（或手动运行 “Publish to npm” workflow）。workflow 会先跑测试，再通过
+OIDC 发布，无需 `NPM_TOKEN`，并自动附带 provenance。
 
 > 从私有仓库发布时 npm 不生成 provenance；本仓库是公开仓库，因此正常生成。
 
