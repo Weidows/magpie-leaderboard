@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>竞技榜 · Leaderboard</title>
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+    <script src="_magpie/bridge.js"></script>
+    <script defer src="data-aa.js"></script>
+    <script defer src="data-harness.js"></script>
+    <script defer src="app.js"></script>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <a class="brand" href="#overview" data-view-link="overview" aria-label="回到总览">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="brand-text"><strong>竞技榜</strong><small>LEADERBOARD</small></span>
+        </a>
+        <nav class="tabs" aria-label="页面视图" role="tablist">
+          <button class="tab is-active" type="button" role="tab" aria-selected="true" data-view="overview">总览</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" data-view="models">模型榜</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" data-view="agents">Agent 战场</button>
+        </nav>
+        <div class="topbar-meta">
+          <span class="snapshot"><span class="live-dot" aria-hidden="true"></span>快照 <time id="snapshot-date">—</time></span>
+          <button id="theme-toggle" class="icon-button" type="button" aria-label="切换主题" title="切换主题">
+            <svg class="icon-sun" aria-hidden="true" viewBox="0 0 20 20"><circle cx="10" cy="10" r="3.2"></circle><path d="M10 1.8v2M10 16.2v2M1.8 10h2M16.2 10h2M4.2 4.2l1.4 1.4m8.8 8.8 1.4 1.4m0-11.6-1.4 1.4m-8.8 8.8-1.4 1.4"></path></svg>
+            <svg class="icon-moon" aria-hidden="true" viewBox="0 0 20 20"><path d="M16.8 12.2A7.2 7.2 0 0 1 7.8 3.1a7.3 7.3 0 1 0 9 9.1Z"></path></svg>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section id="view-overview" class="view is-active" role="tabpanel" aria-label="总览"></section>
+
+        <section id="view-models" class="view" role="tabpanel" aria-label="模型榜" hidden>
+          <header class="page-head">
+            <p class="eyebrow"><span class="eyebrow-line"></span>Artificial Analysis · 模型侧</p>
+            <h1>模型榜</h1>
+            <p class="page-lede">按 Artificial Analysis Intelligence Index 排序。同一模型的多个推理档位只保留最高分，分数与价格均来自本地快照。</p>
+          </header>
+
+          <div class="toolbar">
+            <label class="search-box">
+              <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="8.8" cy="8.8" r="5.8"></circle><path d="m13.2 13.2 4 4"></path></svg>
+              <input id="model-search" type="search" placeholder="搜索模型、厂商或 slug" autocomplete="off" spellcheck="false">
+              <kbd>/</kbd>
+            </label>
+            <div class="toolbar-group">
+              <div class="segments" role="group" aria-label="按开放权重筛选">
+                <button type="button" class="segment is-active" data-scope="all">全部</button>
+                <button type="button" class="segment" data-scope="open">开源</button>
+                <button type="button" class="segment" data-scope="closed">闭源</button>
+              </div>
+              <label class="select-field">
+                <span>厂商</span>
+                <select id="creator-filter"><option value="all">全部厂商</option></select>
+              </label>
+              <label class="select-field">
+                <span>排序</span>
+                <select id="sort-filter">
+                  <option value="intelligence">综合智能</option>
+                  <option value="coding">编程能力</option>
+                  <option value="agent">Agent 能力</option>
+                  <option value="value">性价比</option>
+                  <option value="speed">输出速度</option>
+                  <option value="price">价格从低到高</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="list-meta">
+            <p id="model-count" aria-live="polite">—</p>
+            <span>点击任意行查看完整指标</span>
+          </div>
+
+          <div class="table-wrap">
+            <table class="model-table">
+              <thead>
+                <tr>
+                  <th class="col-rank">#</th>
+                  <th class="col-model">模型</th>
+                  <th class="col-creator hide-sm">厂商</th>
+                  <th class="col-score">综合</th>
+                  <th class="col-metric hide-sm">编程</th>
+                  <th class="col-metric hide-sm">Agent</th>
+                  <th class="col-price">价格 <small>$/1M</small></th>
+                  <th class="col-speed hide-sm">速度 <small>tok/s</small></th>
+                  <th class="col-context hide-sm">上下文</th>
+                  <th class="col-open">权重</th>
+                </tr>
+              </thead>
+              <tbody id="model-rows"></tbody>
+            </table>
+            <p id="model-empty" class="empty-state" hidden>没有符合条件的模型。</p>
+          </div>
+          <p class="footnote">价格是每百万 token 的输入 / 输出价；表中大号数字是 3:1 混合价（3 份输入 + 1 份输出），悬停可看原始价格。性价比 = 综合分 ÷ 混合价。标 $0 的多为开放权重、上游没有 API 报价，自托管的算力成本另计。</p>
+        </section>
+
+        <section id="view-agents" class="view" role="tabpanel" aria-label="Agent 战场" hidden>
+          <header class="page-head">
+            <p class="eyebrow"><span class="eyebrow-line"></span>Harness Leaderboard · Agent 侧</p>
+            <h1>同一个模型，<br>换一套 Agent 外壳。</h1>
+            <p class="page-lede">四个开源模型、十套 coding-agent harness，同样的权重与推理强度，只改变外层工具链。模型内排名看 overall 复合分（50% 通过率 + 50% 成本效率），跨模型只比较任务通过率。</p>
+          </header>
+
+          <div id="agent-model-switch" class="model-switch" role="tablist" aria-label="选择模型"></div>
+          <div id="agent-body"></div>
+
+          <aside class="method-note">
+            <strong>怎么读这张榜</strong>
+            <p>同一配置重跑时，名次翻转率约 <span id="noise-rerun">—</span>；换 harness 的翻转率约 <span id="noise-harness">—</span>。所以 1–2 分的差距基本在噪声里，优先看分组、通过率和成本，而不是小数点。</p>
+          </aside>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="footer-main">
+          <div class="footer-brand">
+            <span class="brand-mark small" aria-hidden="true"><i></i><i></i><i></i></span>
+            <div><strong>竞技榜</strong><p>Magpie 插件 · 非官方数据浏览器</p></div>
+          </div>
+          <div class="footer-links">
+            <a href="https://artificialanalysis.ai/zh" target="_blank" rel="noreferrer">Artificial Analysis ↗</a>
+            <a href="https://huggingface.co/spaces/joelniklaus/harness-leaderboard" target="_blank" rel="noreferrer">Harness Leaderboard ↗</a>
+          </div>
+        </div>
+        <p class="footer-note">页面运行时不联网，所有分数来自随包发布的快照。两个榜单口径不同，分数不可跨榜相加或直接排序。商标归各自所有者所有。</p>
+      </footer>
+    </div>
+
+    <div id="modal" class="modal" hidden>
+      <div class="modal-backdrop" data-close-modal></div>
+      <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <button class="modal-close" type="button" data-close-modal aria-label="关闭">
+          <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 5 10 10M15 5 5 15"></path></svg>
+        </button>
+        <div id="modal-content"></div>
+      </div>
+    </div>
+
+    <div id="tooltip" class="chart-tooltip" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>

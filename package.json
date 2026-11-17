@@ -1,0 +1,63 @@
+{
+  "name": "magpie-leaderboard",
+  "version": "0.1.0",
+  "description": "Magpie 插件：模型与编码 Agent 竞技榜，汇总 Artificial Analysis 与 Harness Leaderboard，离线可看。",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Weidows/magpie-leaderboard.git"
+  },
+  "homepage": "https://github.com/Weidows/magpie-leaderboard#readme",
+  "bugs": {
+    "url": "https://github.com/Weidows/magpie-leaderboard/issues"
+  },
+  "files": [
+    "page",
+    "scripts",
+    "README.md",
+    "LICENSE",
+    "THIRD-PARTY-NOTICES.md"
+  ],
+  "keywords": [
+    "magpie",
+    "magpie-plugin",
+    "magpie-page",
+    "leaderboard",
+    "ai-models",
+    "coding-agents",
+    "benchmark"
+  ],
+  "scripts": {
+    "sync": "node scripts/sync.mjs",
+    "sync:aa": "node scripts/sync-aa.mjs",
+    "sync:harness": "node scripts/sync-harness.mjs",
+    "test": "node --test test/*.test.mjs && node --check page/app.js",
+    "prepublishOnly": "npm test"
+  },
+  "engines": {
+    "magpie": ">=0.1.1340"
+  },
+  "magpie": {
+    "name": "竞技榜",
+    "summary": {
+      "en": "Compare frontier models and coding-agent harnesses. Offline, chart-first, with data snapshots from Artificial Analysis and Harness Leaderboard.",
+      "zh": "对比前沿模型与编码 Agent 框架：综合智能、编程、价格、速度，以及同一模型下不同 Agent 外壳的真实通过率。离线可看。"
+    },
+    "page": {
+      "title": "Leaderboard",
+      "titles": {
+        "zh": "竞技榜",
+        "zh-TW": "競技榜",
+        "ja": "リーダーボード"
+      },
+      "file": "page/index.html",
+      "icon": "page/icon.svg"
+    },
+    "permissions": [],
+    "options": {
+      "theme": "system"
+    },
+    "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI4IiBmaWxsPSIjMTcxNzE3Ii8+PHJlY3QgeD0iMjYiIHk9IjY2IiB3aWR0aD0iMTYiIGhlaWdodD0iMzYiIHJ4PSI0IiBmaWxsPSIjN2NmZmQ0Ii8+PHJlY3QgeD0iNTIiIHk9IjQ2IiB3aWR0aD0iMTYiIGhlaWdodD0iNTYiIHJ4PSI0IiBmaWxsPSIjZmZkMTY2Ii8+PHJlY3QgeD0iNzgiIHk9IjI2IiB3aWR0aD0iMTYiIGhlaWdodD0iNzYiIHJ4PSI0IiBmaWxsPSIjZmY3YTVhIi8+PC9zdmc+Cg=="
+  }
+}
